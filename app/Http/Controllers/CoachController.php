@@ -2,63 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CoachService;
 use Illuminate\Http\Request;
 
-class Coach extends Controller
+class CoachController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $service;
+
+    public function __construct(CoachService $service)
+    {
+        $this->service = $service;
+    }
+
     public function index()
     {
-        //
+        $students = $this->service->findAllCoachs();
+        return response()->json($students);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function show($id)
     {
-        //
+        $student = $this->service->findCoachById($id);
+        return response()->json($student);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $studentId = $this->service->createCoach($request->all());
+        $student = $this->service->findCoachById($studentId);
+        return response()->json($student);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function update(Request $request, $id)
     {
-        //
+        $this->service->updateCoach($id, $request->all());
+        $student = $this->service->findCoachById($id);
+        return response()->json($student);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function destroy($id)
     {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $this->service->deleteCoach($id);
+        return response()->json(['message' => 'Coach deleted successfully']);
     }
 }
