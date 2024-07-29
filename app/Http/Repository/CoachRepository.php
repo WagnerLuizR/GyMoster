@@ -8,7 +8,7 @@ class CoachRepository
 {
     public function create($data)
     {
-        return DB::table('coa_coa_coach')->insertGetId($data);
+        return DB::table('coa_coach')->insertGetId($data);
     }
 
     public function update($id, $data)
