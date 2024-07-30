@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Service\AutorService;
-use App\Service\AutorServiceInterface;
+use App\Service\userService;
+use App\Service\userServiceInterface;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
@@ -15,8 +15,8 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
       //$this->app->bind(
-         //AutorServiceInterface::class,
-         //AutorService::class
+         //userServiceInterface::class,
+         //userService::class
      //);
     }
   

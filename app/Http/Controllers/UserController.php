@@ -29,11 +29,11 @@ class UserController extends Controller
         $registro = null;
         try {
             $registro = $this->service->show($id);
-            return view('autor.show',[
+            return view('user.show',[
                 'registro'=>$registro,
             ]);
         } catch(Exception $e) {
-            return view('autor.show',[
+            return view('user.show',[
                 'registro'=>$registro,
                 'fail'=>'Registro não localizado '.$e->getMessage(),
             ]);
@@ -46,10 +46,10 @@ class UserController extends Controller
 
         try {
             $registro = $this->service->store($registro);
-            $user = redirect()->route('autor.index')->with('success','Registro cadastrado com sucesso!');
+            $user = redirect()->route('user.index')->with('success','Registro cadastrado com sucesso!');
             return response()->json($user);
         } catch(Exception $e) {
-            return view('autor.create',[
+            return view('user.create',[
                 'registro'=>$registro,
                 'fail'=>$e->getMessage(),
             ]);
@@ -64,7 +64,7 @@ class UserController extends Controller
         $user = $this->service->show($id);
         return response()->json($user);
         } catch(Exception $e) {
-            return view('autor.edit',[
+            return view('user.edit',[
                 'registro'=>$registro,
                 'fail'=>$e->getMessage(),
             ]);
