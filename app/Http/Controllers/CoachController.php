@@ -16,28 +16,28 @@ class CoachController extends Controller
 
     public function index()
     {
-        $students = $this->service->findAllCoachs();
-        return response()->json($students);
+        $coachs = $this->service->findAllCoachs();
+        return response()->json($coachs);
     }
 
     public function show($id)
     {
-        $student = $this->service->findCoachById($id);
-        return response()->json($student);
+        $coach = $this->service->findCoachById($id);
+        return response()->json($coach);
     }
 
     public function store(Request $request)
     {
-        $studentId = $this->service->createCoach($request->all());
-        $student = $this->service->findCoachById($studentId);
-        return response()->json($student);
+        $coachId = $this->service->createCoach($request->all());
+        $coach = $this->service->findCoachById($coachId);
+        return response()->json($coach);
     }
 
     public function update(Request $request, $id)
     {
         $this->service->updateCoach($id, $request->all());
-        $student = $this->service->findCoachById($id);
-        return response()->json($student);
+        $coach = $this->service->findCoachById($id);
+        return response()->json($coach);
     }
 
     public function destroy($id)

@@ -1,12 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AutorRestController;
+use App\Http\Controllers\UserController;
 
 Route::prefix('autor')->group(function () {
-    Route::any('/index',[AutorRestController::class,'index']);
-    Route::get('/show/{id}',[AutorRestController::class,'show']);
-    Route::post('/store',[AutorRestController::class,'store']);
-    Route::put('/update/{id}',[AutorRestController::class,'update']);
-    Route::delete('/destroy/{id}',[AutorRestController::class,'destroy']);
+    Route::any('/index',[UserController::class,'index']);
+    Route::get('/show/{id}',[UserController::class,'show']);
+    Route::post('/store',[UserController::class,'store']);
+    Route::put('/update/{id}',[UserController::class,'update']);
+    Route::delete('/destroy/{id}',[UserController::class,'destroy']);
 });

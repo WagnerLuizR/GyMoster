@@ -16,28 +16,28 @@ class TrainingController extends Controller
 
     public function index()
     {
-        $students = $this->service->findAllTrainings();
-        return response()->json($students);
+        $trainings = $this->service->findAllTrainings();
+        return response()->json($trainings);
     }
 
     public function show($id)
     {
-        $student = $this->service->findTrainingById($id);
-        return response()->json($student);
+        $training = $this->service->findTrainingById($id);
+        return response()->json($training);
     }
 
     public function store(Request $request)
     {
-        $studentId = $this->service->createTraining($request->all());
-        $student = $this->service->findTrainingById($studentId);
-        return response()->json($student);
+        $trainingId = $this->service->createTraining($request->all());
+        $training = $this->service->findTrainingById($trainingId);
+        return response()->json($training);
     }
 
     public function update(Request $request, $id)
     {
         $this->service->updateTraining($id, $request->all());
-        $student = $this->service->findTrainingById($id);
-        return response()->json($student);
+        $training = $this->service->findTrainingById($id);
+        return response()->json($training);
     }
 
     public function destroy($id)
