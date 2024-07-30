@@ -9,9 +9,11 @@ class Coach extends Model
 {
     use HasFactory;
 
+    protected $table = 'coa_coach'; // Especifica a tabela correta
+
     protected $fillable = [
         'nickname',
-         'profile',
+        'profile',
     ];
 
     // Método para criar um novo coach
@@ -43,5 +45,4 @@ class Coach extends Model
     {
         return $this->hasMany(Student::class, 'coa_id');
     }
-
 }

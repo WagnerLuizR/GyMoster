@@ -16,8 +16,8 @@ class CoachController extends Controller
 
     public function index()
     {
-        $coachs = $this->service->findAllCoachs();
-        return response()->json($coachs);
+        $coaches = $this->service->findAllCoachs();
+        return response()->json($coaches);
     }
 
     public function show($id)
