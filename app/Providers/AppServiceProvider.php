@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Http\Service\Interface\studentServiceInterface;
+use app\Http\Service\StudentService;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +14,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+      $this->app->bind(
+         studentServiceInterface::class,
+         StudentService::class
+      );
     }
 
     /**
@@ -19,6 +25,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Paginator::useBootstrapFive();
     }
 }
