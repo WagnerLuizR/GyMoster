@@ -13,9 +13,7 @@ return new class extends Migration {
         Schema::create('atd_attendance', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('student_id');
-            $table->unsignedBigInteger('training_id');
             $table->foreign('student_id')->references('id')->on('std_student')->onDelete('cascade');
-            $table->foreign('training_id')->references('id')->on('tra_training')->onDelete('cascade');
             $table->date('attendance_date');
             $table->enum('status', ['p', 'f'])->default('P');
             $table->timestamps();

@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\AttendanceRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
  * Class AttendanceCrudController
  * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ * @property-read CrudPanel $crud
  */
 class AttendanceCrudController extends CrudController
 {
@@ -28,7 +29,7 @@ class AttendanceCrudController extends CrudController
     {
         CRUD::setModel(\App\Models\Attendance::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/attendance');
-        CRUD::setEntityNameStrings('attendance', 'attendances');
+        CRUD::setEntityNameStrings('Lista de Presença', 'Presenças');
     }
 
     /**
@@ -37,17 +38,19 @@ class AttendanceCrudController extends CrudController
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
      * @return void
      */
-    protected function setupListOperation()
+    protected function setupListOperation(): void
     {
-        CRUD::setFromDb(); // set columns from db columns.
-
-        CRUD::column('Attendance Date');
-        CRUD::column('status');
-
         CRUD::addColumn([
-            'status' => 'Status', // Nome do relacionamento no modelo
+            'name' => 'student', // Nome do método de relacionamento no modelo
             'type' => 'select',
+            'label' => 'Estudante',
+            'entity' => 'student', // Nome do método de relacionamento no modelo
+            'attribute' => 'nickname', // Atributo do modelo Student que você quer exibir
+            'model' => 'App\Models\Student', // Caminho completo para o modelo Student
         ]);
+
+        CRUD::column('attendance_date')->type('date')->label('Data');
+
         CRUD::addColumn([
             'name' => 'status',
             'label' => 'Status',
@@ -58,18 +61,15 @@ class AttendanceCrudController extends CrudController
         ]);
 
         CRUD::addColumn([
-            'name' => 'student',
-            'label' => 'Student',
-            'type' => 'select',
-            'entity' => 'student',
-            'attribute' => 'nickname',
-            'model' => "App\Models\Student"
+            'name' => 'trainings', // Nome do relacionamento no modelo
+            'type' => 'select_multiple',
+            'label' => 'Treinos',
+            'entity' => 'trainings', // Nome do método de relacionamento no modelo
+            'attribute' => 'name', // Atributo do modelo Training que você quer exibir
+            'model' => 'App\Models\Training', // Caminho completo para o modelo Training
         ]);
-        /**
-         * Columns can be defined using the fluent syntax:
-         * - CRUD::column('price')->type('number');
-         */
     }
+
 
     /**
      * Define what happens when the Create operation is loaded.
@@ -77,28 +77,13 @@ class AttendanceCrudController extends CrudController
      * @see https://backpackforlaravel.com/docs/crud-operation-create
      * @return void
      */
-    protected function setupCreateOperation()
+    protected function setupCreateOperation(): void
     {
         CRUD::setValidation(AttendanceRequest::class);
-        CRUD::setFromDb(); // set fields from db columns.
-
-        CRUD::addField([   // Date
-            'name' => 'attendanceDate',
-            'label' => 'Attendance Date',
-            'type' => 'date'
-        ]);
 
         CRUD::addField([
-            'name' => 'status',
-            'label' => 'Status',
-            'type' => 'select_from_array',
-            'options' => ['p' => 'Presente', 'f' => 'Falta'],
-            'allows_null' => false,
-            'default' => 'p',
-        ]);
-        CRUD::addField([
-            'name' => 'student',
-            'label' => 'Student',
+            'name' => 'student_id',
+            'label' => 'Estudante',
             'type' => 'select',
 
             'entity' => 'student',
@@ -111,10 +96,35 @@ class AttendanceCrudController extends CrudController
             }),
         ]);
 
-        /**
-         * Fields can be defined using the fluent syntax:
-         * - CRUD::field('price')->type('number');
-         */
+        CRUD::addField([   // Date
+            'name' => 'attendance_date',
+            'label' => 'Data de Comparecimento',
+            'type' => 'date'
+        ]);
+
+        CRUD::addField([
+            'name' => 'status',
+            'label' => 'Status',
+            'type' => 'select_from_array',
+            'options' => ['p' => 'Presente', 'f' => 'Falta'],
+            'allows_null' => false,
+            'default' => 'p',
+        ]);
+
+        CRUD::addField([
+            'name' => 'trainings',
+            'label' => 'Treinos',
+            'type' => 'select_multiple',
+
+            'entity' => 'trainings',
+            'model' => "App\Models\Training",
+            'attribute' => 'name',
+            'pivot' => true,
+
+            'options' => (function ($query) {
+                return $query->orderBy('name', 'ASC')->get();
+            }),
+        ]);
     }
 
     /**
@@ -123,7 +133,7 @@ class AttendanceCrudController extends CrudController
      * @see https://backpackforlaravel.com/docs/crud-operation-update
      * @return void
      */
-    protected function setupUpdateOperation()
+    protected function setupUpdateOperation(): void
     {
         $this->setupCreateOperation();
     }

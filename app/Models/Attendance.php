@@ -6,30 +6,30 @@ use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Attendance extends Model
 {
     use CrudTrait;
     use HasFactory;
 
-    /*
-    |--------------------------------------------------------------------------
-    | GLOBAL VARIABLES
-    |--------------------------------------------------------------------------
-    */
-
     protected $table = 'atd_attendance';
     protected $primaryKey = 'id';
-    // public $timestamps = false;
     protected $guarded = ['id'];
     protected $fillable = [
-        'attendanceDate',
-        'status'
+        'attendance_date',
+        'status',
+        'student_id'
     ];
 
     // protected $hidden = [];
+    public function trainings(): BelongsToMany
+    {
+        return $this->belongsToMany(Training::class);
+    }
+
     public function student(): BelongsTo
     {
-        return $this->belongsTo(Student::class, 'atd_attendance_student_id_foreign');
+        return $this->belongsTo(Student::class, 'student_id');
     }
 }

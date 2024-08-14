@@ -25,12 +25,12 @@ class StudentRequest extends FormRequest
     public function rules()
     {
         return [
-            'nickname' => 'required|min:5|max:255',
-            'age' => 'required',
+            'nickname' => 'required|min:4|max:255',
+            'age' => 'required|integer',
             'gender' => 'required',
-            'height' => 'required',
-            'weight' => 'required',
-            'bmi' => 'required',
+            'height' => 'required|numeric',
+            'weight' => 'required|numeric',
+            'bmi' => 'nullable|numeric',
         ];
     }
 

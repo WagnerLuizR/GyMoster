@@ -39,18 +39,19 @@ class TrainingCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::setFromDb(); // set columns from db columns.
+        CRUD::column('name')->label('Name');
+        CRUD::column('description')->label('Description');
 
-
-        CRUD::field('students');
         CRUD::addColumn([
             'name' => 'difficult_level',
-            'label' => 'Difficult level',
+            'label' => 'Difficulty Level',
             'type' => 'select_from_array',
             'options' => ['i' => 'Iniciante', 'in' => 'Intermediário', 'a' => 'Avançado'],
             'allows_null' => false,
-            'default' => 'i'
+            'default' => 'i',
         ]);
+        CRUD::column('duration')->label('Duration');
+
         CRUD::addColumn([
             'name' => 'type',
             'label' => 'Type',

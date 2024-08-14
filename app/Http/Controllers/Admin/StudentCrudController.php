@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Requests\StudentRequest;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Http\RedirectResponse;
 
 /**
  * Class StudentCrudController
@@ -24,7 +25,7 @@ class StudentCrudController extends CrudController
      *
      * @return void
      */
-    public function setup()
+    public function setup(): void
     {
         CRUD::setModel(\App\Models\Student::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/student');
@@ -37,36 +38,36 @@ class StudentCrudController extends CrudController
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
      * @return void
      */
-    protected function setupListOperation()
+    protected function setupListOperation(): void
     {
-        CRUD::setFromDb(); // set columns from db columns.
-
-        CRUD::column('nickname');
-        CRUD::column('height');
-        CRUD::column('weight');
+        CRUD::column('nickname')->type('text')->label('Nome');
 
         CRUD::addColumn([
             'name' => 'gender',
-            'label' => 'Gender',
+            'label' => 'Gênero',
             'type' => 'select_from_array',
             'options' => ['M' => 'Male', 'F' => 'Female', 'O' => 'Other'],
             'allows_null' => false,
             'default' => 'O'
         ]);
 
+        CRUD::column('height')->type('number')->label('Altura');
+        CRUD::column('weight')->type('number')->label('Peso');
+
+        CRUD::column('bmi')->type('number')->label('IMC');
+
+
         CRUD::addColumn([
             'name' => 'trainings', // Nome do relacionamento no modelo
             'type' => 'select_multiple',
-            'label' => 'Trainings',
+            'label' => 'Treinos',
             'entity' => 'trainings', // Nome do método de relacionamento no modelo
             'attribute' => 'name', // Atributo do modelo Training que você quer exibir
             'model' => 'App\Models\Training', // Caminho completo para o modelo Training
         ]);
 
-        /**
-         * Columns can be defined using the fluent syntax:
-         * - CRUD::column('price')->type('number');
-         */
+        CRUD::column('created_at')->type('datetime')->label('Criado em');
+        CRUD::column('updated_at')->type('datetime')->label('Atualizado em');
     }
 
     /**
@@ -75,22 +76,25 @@ class StudentCrudController extends CrudController
      * @see https://backpackforlaravel.com/docs/crud-operation-create
      * @return void
      */
-    protected function setupCreateOperation()
+    protected function setupCreateOperation(): void
     {
         CRUD::setValidation(StudentRequest::class);
-        CRUD::setFromDb(); // set fields from db columns.
-
+        CRUD::field('nickname')->type('text')->label('Nome');
+        CRUD::field('age')->type('number')->label('Idade');
         CRUD::addField([
             'name' => 'gender',
-            'label' => 'Gender',
+            'label' => 'Gênero',
             'type' => 'select_from_array',
             'options' => ['M' => 'Male', 'F' => 'Female', 'O' => 'Other'],
             'allows_null' => false,
             'default' => 'O'
         ]);
+        CRUD::field('height')->type('number')->label('Altura')->attributes(['step' => '0.01']);
+        CRUD::field('weight')->type('number')->label('Peso')->attributes(['step' => '0.01']);
+
         CRUD::addField([
             'name' => 'trainings',
-            'label' => 'Trainings',
+            'label' => 'Treinos',
             'type' => 'select_multiple',
 
             'entity' => 'trainings',
@@ -102,11 +106,28 @@ class StudentCrudController extends CrudController
                 return $query->orderBy('name', 'ASC')->get();
             }),
         ]);
-        /**
-         * Fields can be defined using the fluent syntax:
-         * - CRUD::field('price')->type('number');
-         */
     }
+
+    public function store(): RedirectResponse
+    {
+        $this->crud->hasAccessOrFail('create');
+
+        // Obter os dados da requisição
+        $data = request()->all();
+
+        // Verificar se os campos de peso e altura foram informados
+        if (isset($data['weight']) && isset($data['height']) && $data['height'] > 0) {
+            // Calcular o IMC
+            $data['bmi'] = $data['weight'] / ($data['height'] * $data['height']);
+        }
+
+        // Salvar o registro com o IMC calculado
+        $item = $this->crud->create($data);
+
+        // Redirecionar após a criação
+        return $this->crud->performSaveAction($item->getKey());
+    }
+
 
     /**
      * Define what happens when the Update operation is loaded.
@@ -114,7 +135,7 @@ class StudentCrudController extends CrudController
      * @see https://backpackforlaravel.com/docs/crud-operation-update
      * @return void
      */
-    protected function setupUpdateOperation()
+    protected function setupUpdateOperation(): void
     {
         $this->setupCreateOperation();
     }
