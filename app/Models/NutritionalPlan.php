@@ -5,6 +5,7 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class NutritionalPlan extends Model
 {
@@ -19,10 +20,15 @@ class NutritionalPlan extends Model
 
     protected $table = 'nutritional_plan';
     protected $primaryKey = 'id';
-    // public $timestamps = false;
+    public $timestamps = true;
     protected $guarded = ['id'];
     protected $fillable = [
-        'planDescription'
+        'student_id',
+        'plan_description',
     ];
-    // protected $hidden = [];
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'student_id');
+    }
 }

@@ -3,22 +3,29 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\StudentRequest;
+use App\Models\Student;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Http\RedirectResponse;
 
 /**
  * Class StudentCrudController
  * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ * @property-read CrudPanel $crud
  */
 class StudentCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use ListOperation;
+    use CreateOperation;
+    use UpdateOperation;
+    use DeleteOperation;
+    use ShowOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -27,9 +34,9 @@ class StudentCrudController extends CrudController
      */
     public function setup(): void
     {
-        CRUD::setModel(\App\Models\Student::class);
+        CRUD::setModel(Student::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/student');
-        CRUD::setEntityNameStrings('student', 'students');
+        CRUD::setEntityNameStrings('Estudante', 'Estudantes');
     }
 
     /**
@@ -46,7 +53,7 @@ class StudentCrudController extends CrudController
             'name' => 'gender',
             'label' => 'Gênero',
             'type' => 'select_from_array',
-            'options' => ['M' => 'Male', 'F' => 'Female', 'O' => 'Other'],
+            'options' => ['M' => 'Homem', 'F' => 'Mulher', 'O' => 'Outro'],
             'allows_null' => false,
             'default' => 'O'
         ]);
@@ -70,6 +77,11 @@ class StudentCrudController extends CrudController
         CRUD::column('updated_at')->type('datetime')->label('Atualizado em');
     }
 
+    protected function setupShowOperation(): void
+    {
+        $this->setupListOperation();
+    }
+
     /**
      * Define what happens when the Create operation is loaded.
      *
@@ -85,7 +97,7 @@ class StudentCrudController extends CrudController
             'name' => 'gender',
             'label' => 'Gênero',
             'type' => 'select_from_array',
-            'options' => ['M' => 'Male', 'F' => 'Female', 'O' => 'Other'],
+            'options' => ['M' => 'Homem', 'F' => 'Mulher', 'O' => 'Outro'],
             'allows_null' => false,
             'default' => 'O'
         ]);

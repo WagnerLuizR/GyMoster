@@ -25,7 +25,9 @@ class TrainingProgressRequest extends FormRequest
     public function rules()
     {
         return [
-            'progressDescription' => 'required',
+            'student_id' => 'required',
+            'training_id' => 'required',
+            'progress_description' => 'required',
             'date' => 'required|date',
         ];
     }
@@ -50,7 +52,10 @@ class TrainingProgressRequest extends FormRequest
     public function messages()
     {
         return [
-            //
+            'student_id' => 'Campo :attribute obrigatório.',
+            'training_id' => 'Campo :attribute obrigatório.',
+            'progress_description' => 'Campo :attribute obrigatório.',
+            'date' => 'Campo :attribute obrigatório.'
         ];
     }
 }

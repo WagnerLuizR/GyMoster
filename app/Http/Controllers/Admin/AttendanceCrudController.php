@@ -3,7 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\AttendanceRequest;
+use App\Models\Attendance;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
@@ -14,11 +20,11 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
  */
 class AttendanceCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use ListOperation;
+    use CreateOperation;
+    use UpdateOperation;
+    use DeleteOperation;
+    use ShowOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -27,9 +33,9 @@ class AttendanceCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Attendance::class);
+        CRUD::setModel(Attendance::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/attendance');
-        CRUD::setEntityNameStrings('Lista de Presença', 'Presenças');
+        CRUD::setEntityNameStrings('Presença', 'Presenças');
     }
 
     /**
@@ -41,12 +47,12 @@ class AttendanceCrudController extends CrudController
     protected function setupListOperation(): void
     {
         CRUD::addColumn([
-            'name' => 'student', // Nome do método de relacionamento no modelo
+            'name' => 'student',
             'type' => 'select',
             'label' => 'Estudante',
-            'entity' => 'student', // Nome do método de relacionamento no modelo
-            'attribute' => 'nickname', // Atributo do modelo Student que você quer exibir
-            'model' => 'App\Models\Student', // Caminho completo para o modelo Student
+            'entity' => 'student',
+            'attribute' => 'nickname',
+            'model' => 'App\Models\Student',
         ]);
 
         CRUD::column('attendance_date')->type('date')->label('Data');
@@ -68,6 +74,11 @@ class AttendanceCrudController extends CrudController
             'attribute' => 'name', // Atributo do modelo Training que você quer exibir
             'model' => 'App\Models\Training', // Caminho completo para o modelo Training
         ]);
+    }
+
+    protected function setupShowOperation(): void
+    {
+        $this->setupListOperation();
     }
 
 

@@ -25,8 +25,11 @@ class ScheduleRequest extends FormRequest
     public function rules()
     {
         return [
-            'startTime' => 'required|date',
-            'endTime' => 'required|date',
+            'student_id' => 'required',
+            'training_id' => 'required',
+            'date' => 'required|date',
+            'start_time' => 'required',
+            'end_time' => 'required',
             'location' => 'required',
         ];
     }
@@ -51,7 +54,12 @@ class ScheduleRequest extends FormRequest
     public function messages()
     {
         return [
-            //
+            'student_id' => 'Campo :attribute obrigatório.',
+            'training_id' => 'Campo :attribute obrigatório.',
+            'date' => 'Campo :attribute obrigatório.',
+            'start_time' => 'Campo :attribute obrigatório.',
+            'end_time' => 'Campo :attribute obrigatório.',
+            'location' => 'Campo :attribute obrigatório.'
         ];
     }
 }

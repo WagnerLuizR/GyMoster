@@ -13,10 +13,12 @@ return new class extends Migration {
         Schema::create('tra_schedule', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('training_id');
+            $table->unsignedBigInteger('student_id');
             $table->date('date');
             $table->time('start_time');
             $table->time('end_time');
             $table->string('location')->nullable();
+            $table->foreign('student_id')->references('id')->on('std_student')->onDelete('cascade');
             $table->foreign('training_id')->references('id')->on('tra_training')->onDelete('cascade');
             $table->timestamps();
         });

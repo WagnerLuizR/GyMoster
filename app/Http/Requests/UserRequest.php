@@ -25,7 +25,8 @@ class UserRequest extends FormRequest
     public function rules()
     {
         return [
-            // 'name' => 'required|min:5|max:255'
+            'name' => 'required|min:5|max:255',
+            'email' => 'required|email|unique:users,email'
         ];
     }
 
@@ -49,7 +50,9 @@ class UserRequest extends FormRequest
     public function messages()
     {
         return [
-            //
+            'name' => 'Campo :attribute obrigatório.',
+            'email' => 'Campo :attribute obrigatório.',
+            'password' => 'Campo :attribute obrigatório.'
         ];
     }
 }

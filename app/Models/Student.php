@@ -40,4 +40,14 @@ class Student extends Model
     {
         return $this->hasOne(Attendance::class);
     }
+
+    public function schedule(): HasOne
+    {
+        return $this->hasOne(Schedule::class);
+    }
+
+    public function nutritionalPlan(): HasOne
+    {
+        return $this->hasOne(NutritionalPlan::class);
+    }
 }

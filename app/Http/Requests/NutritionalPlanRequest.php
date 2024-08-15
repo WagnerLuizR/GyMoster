@@ -25,7 +25,8 @@ class NutritionalPlanRequest extends FormRequest
     public function rules()
     {
         return [
-            'planDescription' => 'required'
+            'student_id' => 'required',
+            'plan_description' => 'required'
         ];
     }
 
@@ -49,7 +50,8 @@ class NutritionalPlanRequest extends FormRequest
     public function messages()
     {
         return [
-            //
+            'student_id' => 'Campo :attribute obrigatório.',
+            'plan_description' => 'Campo :attribute obrigatório.',
         ];
     }
 }

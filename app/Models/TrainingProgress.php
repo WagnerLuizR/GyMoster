@@ -5,6 +5,7 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class TrainingProgress extends Model
 {
@@ -19,11 +20,22 @@ class TrainingProgress extends Model
 
     protected $table = 'tra_progress';
     protected $primaryKey = 'id';
-    // public $timestamps = false;
+    public $timestamps = true;
     protected $guarded = ['id'];
     protected $fillable = [
-        'progressDescription',
+        'student_id',
+        'training_id',
+        'progress_description',
         'date'
     ];
-    // protected $hidden = [];
+
+    public function student(): BelongsTo
+    {
+        return $this->belongsTo(Student::class, 'student_id');
+    }
+
+    public function training(): BelongsTo
+    {
+        return $this->belongsTo(Training::class, 'training_id');
+    }
 }

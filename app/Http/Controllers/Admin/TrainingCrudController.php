@@ -3,21 +3,28 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\TrainingRequest;
+use App\Models\Training;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
  * Class TrainingCrudController
  * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ * @property-read CrudPanel $crud
  */
 class TrainingCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use ListOperation;
+    use CreateOperation;
+    use UpdateOperation;
+    use DeleteOperation;
+    use ShowOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -26,9 +33,9 @@ class TrainingCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Training::class);
+        CRUD::setModel(Training::class);
         CRUD::setRoute(config('backpack.base.route_prefix') . '/training');
-        CRUD::setEntityNameStrings('training', 'trainings');
+        CRUD::setEntityNameStrings('Treino', 'Treinos');
     }
 
     /**
@@ -39,22 +46,22 @@ class TrainingCrudController extends CrudController
      */
     protected function setupListOperation()
     {
-        CRUD::column('name')->label('Name');
-        CRUD::column('description')->label('Description');
+        CRUD::column('name')->label('Nome');
+        CRUD::column('description')->label('Descrição');
 
         CRUD::addColumn([
             'name' => 'difficult_level',
-            'label' => 'Difficulty Level',
+            'label' => 'Nível de dificuldade',
             'type' => 'select_from_array',
             'options' => ['i' => 'Iniciante', 'in' => 'Intermediário', 'a' => 'Avançado'],
             'allows_null' => false,
             'default' => 'i',
         ]);
-        CRUD::column('duration')->label('Duration');
+        CRUD::column('duration')->label('Duração');
 
         CRUD::addColumn([
             'name' => 'type',
-            'label' => 'Type',
+            'label' => 'Tipo',
             'type' => 'select_from_array',
             'options' => ['a' => 'Alongamento', 'c' => 'Cardio', 'm' => 'Musculação',
                 'tf' => 'Treino Funcional', 'tfx' => 'Treino de Flexibilidade', 'tai' => 'Treino de Alta Intesidade',
@@ -62,10 +69,12 @@ class TrainingCrudController extends CrudController
             'allows_null' => false,
             'default' => 'a'
         ]);
-        /**
-         * Columns can be defined using the fluent syntax:
-         * - CRUD::column('price')->type('number');
-         */
+
+    }
+
+    protected function setupShowOperation()
+    {
+        $this->setupListOperation();
     }
 
     /**
@@ -77,19 +86,22 @@ class TrainingCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation(TrainingRequest::class);
-        CRUD::setFromDb(); // set fields from db columns.
 
+        CRUD::field('name')->label('Nome');
+        CRUD::field('description')->type('textarea')->label('Descrição');
         CRUD::addField([
             'name' => 'difficult_level',
-            'label' => 'Difficult level',
+            'label' => 'Nível de Dificuldade',
             'type' => 'select_from_array',
             'options' => ['i' => 'Iniciante', 'in' => 'Intermediário', 'a' => 'Avançado'],
             'allows_null' => false,
             'default' => 'i'
         ]);
+        CRUD::field('duration')->type('time')->label('Duração');
+
         CRUD::addField([
             'name' => 'type',
-            'label' => 'Type',
+            'label' => 'Tipo',
             'type' => 'select_from_array',
             'options' => ['a' => 'Alongamento', 'c' => 'Cardio', 'm' => 'Musculação',
                 'tf' => 'Treino Funcional', 'tfx' => 'Treino de Flexibilidade', 'tai' => 'Treino de Alta Intesidade',
@@ -98,10 +110,6 @@ class TrainingCrudController extends CrudController
             'default' => 'a'
         ]);
 
-        /**
-         * Fields can be defined using the fluent syntax:
-         * - CRUD::field('price')->type('number');
-         */
     }
 
     /**
