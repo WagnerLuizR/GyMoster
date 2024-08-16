@@ -12,12 +12,6 @@ class TrainingProgress extends Model
     use CrudTrait;
     use HasFactory;
 
-    /*
-    |--------------------------------------------------------------------------
-    | GLOBAL VARIABLES
-    |--------------------------------------------------------------------------
-    */
-
     protected $table = 'tra_progress';
     protected $primaryKey = 'id';
     public $timestamps = true;
@@ -26,6 +20,7 @@ class TrainingProgress extends Model
         'student_id',
         'training_id',
         'progress_description',
+        'progress_point',
         'date'
     ];
 
@@ -37,5 +32,10 @@ class TrainingProgress extends Model
     public function training(): BelongsTo
     {
         return $this->belongsTo(Training::class, 'training_id');
+    }
+
+    public function getStarsAttribute()
+    {
+        return str_repeat('★', $this->progress_point);
     }
 }

@@ -62,6 +62,7 @@ class TrainingProgressCrudController extends CrudController
             'attribute' => 'name',
             'model' => 'App\Models\Training',
         ]);
+        CRUD::column('stars')->label('Pontuação')->type('text');
         CRUD::column('progress_description')->type('textarea')->label('Progresso de treino');
         CRUD::column('date')->type('date')->label('Data');
     }
@@ -108,6 +109,16 @@ class TrainingProgressCrudController extends CrudController
                 return $query->orderBy('name', 'ASC')->get();
             }),
         ]);
+        CRUD::addField([
+            'name' => 'progress_point',
+            'label' => 'Pontuação',
+            'type' => 'select_from_array',
+            'options' => [1 => '1', 2 => '2', 3 => '3',
+                4 => '4', 5 => '5', 6 => '6', 7 => '7'],
+            'allows_null' => false,
+            'default' => 1
+        ]);
+
         CRUD::field('progress_description')->type('textarea')->label('Progresso de treino');
         CRUD::field('date')->type('date')->label('Data');
     }
