@@ -25,7 +25,7 @@ class AttendanceRequest extends FormRequest
     public function rules()
     {
         return [
-            'attendance_date' => 'required|date',
+            'attendance_date' => 'required',
             'status' => 'required',
             'student_id' => 'required',
         ];

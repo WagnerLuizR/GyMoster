@@ -12,6 +12,9 @@ use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
 use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * Class ScheduleCrudController
@@ -125,5 +128,144 @@ class ScheduleCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+    //exposed End-points:
+
+    public function indexExposed(): JsonResponse
+    {
+        // Retrieve all schedules from the database
+        $schedules = Schedule::all();
+
+        // Return a JSON response
+        return response()->json([
+            $schedules
+        ]);
+    }
+
+    /**
+     * Display a single schedule as JSON.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function showExposed(int $id): JsonResponse
+    {
+        $schedule = Schedule::find($id);
+
+        if ($schedule) {
+            return response()->json([
+                $schedule
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Schedule not found'
+            ], 404);
+        }
+    }
+
+    /**
+     * Create a new schedule and return the schedule data as JSON.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function storeExposed(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'studentId' => 'required',
+                'trainingId' => 'required',
+                'date' => 'required',
+                'startTime' => 'required',
+                'endTime' => 'required',
+                'location' => 'required',
+            ]);
+
+            $schedule = Schedule::create([
+                'student_id' => $request->studentId,
+                'training_id' => $request->trainingId,
+                'date' => $request->date,
+                'start_time' => $request->startTime,
+                'end_time' => $request->endTime,
+                'location' => $request->location
+            ]);
+
+            return response()->json([
+                $schedule
+            ], 201);
+        } catch (Exception $exception) {
+            return response()->json([$exception->getMessage()]);
+        }
+    }
+
+    /**
+     * Update an existing schedule and return the updated data as JSON.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function updateExposed(Request $request, int $id): JsonResponse
+    {
+        try {
+            $request->validate([
+                'studentId' => 'required',
+                'trainingId' => 'required',
+                'date' => 'required',
+                'startTime' => 'required',
+                'endTime' => 'required',
+                'location' => 'required',
+            ]);
+            $schedule = Schedule::find($id);
+
+            if (!$schedule) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Schedule not found'
+                ], 404);
+            }
+
+            $schedule->update([
+                'student_id' => $request->studentId ?? $schedule->student_id,
+                'training_id' => $request->trainingId ?? $schedule->training_id,
+                'date' => $request->date ?? $schedule->date,
+                'start_time' => $request->startTime ?? $schedule->start_time,
+                'end_time' => $request->endTime ?? $schedule->end_time,
+                'location' => $request->location ?? $schedule->location,
+            ]);
+
+            return response()->json([
+                $schedule
+            ]);
+        } catch (Exception $exception) {
+            return response()->json([$exception->getMessage()]);
+        }
+    }
+
+    /**
+     * Delete an existing schedule and return a JSON response.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function destroyExposed(int $id): JsonResponse
+    {
+        $schedule = Schedule::find($id);
+
+        if (!$schedule) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Schedule not found'
+            ], 404);
+        }
+
+        $schedule->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Schedule deleted successfully'
+        ]);
     }
 }

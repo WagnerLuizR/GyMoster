@@ -19,6 +19,28 @@ class RouteServiceProvider extends ServiceProvider
      */
     public const HOME = '/home';
 
+    public function map(): void
+    {
+        $this->mapApiRoutes();
+        $this->mapWebRoutes();
+        $this->mapCustomRoutes();
+    }
+
+    protected function mapCustomRoutes(): void
+    {
+        require base_path('routes/backpack/custom.php');
+    }
+
+    protected function mapApiRoutes(): void
+    {
+        require base_path('routes/console.php');
+    }
+
+    protected function mapWebRoutes(): void
+    {
+        require base_path('routes/web.php');
+    }
+
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
      */
@@ -37,5 +59,5 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/web.php'));
         });
     }
-    
+
 }

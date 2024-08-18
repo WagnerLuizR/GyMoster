@@ -12,6 +12,9 @@ use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
 use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * Class AttendanceCrudController
@@ -147,5 +150,131 @@ class AttendanceCrudController extends CrudController
     protected function setupUpdateOperation(): void
     {
         $this->setupCreateOperation();
+    }
+
+    //exposed End-points:
+    public function indexExposed(): JsonResponse
+    {
+        // Retrieve all attendances from the database
+        $attendances = Attendance::all();
+
+        // Return a JSON response
+        return response()->json([
+            $attendances
+        ]);
+    }
+
+    /**
+     * Display a single attendance as JSON.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function showExposed(int $id): JsonResponse
+    {
+        $attendance = Attendance::find($id);
+
+        if ($attendance) {
+            return response()->json([
+                $attendance
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Attendance not found'
+            ], 404);
+        }
+    }
+
+    /**
+     * Create a new attendance and return the attendance data as JSON.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function storeExposed(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'attendanceDate' => 'required',
+                'status' => 'required|string',
+                'studentId' => 'required',
+            ]);
+
+            $attendance = Attendance::create([
+                'attendance_date' => $request->attendanceDate,
+                'status' => $request->status,
+                'student_id' => $request->studentId,
+            ]);
+
+            return response()->json([
+                $attendance
+            ], 201);
+        } catch (Exception $exception) {
+            return response()->json([$exception->getMessage()]);
+        }
+    }
+
+    /**
+     * Update an existing attendance and return the updated data as JSON.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function updateExposed(Request $request, int $id): JsonResponse
+    {
+        try {
+            $request->validate([
+                'attendanceDate' => 'required',
+                'status' => 'required|string',
+                'studentId' => 'required',
+            ]);
+            $attendance = Attendance::find($id);
+
+            if (!$attendance) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Attendance not found'
+                ], 404);
+            }
+
+            $attendance->update([
+                'attendance_date' => $request->attendanceDate ?? $attendance->attendance_date,
+                'status' => $request->status ?? $attendance->status,
+                'student_id' => $request->studentId ?? $attendance->student_id,
+            ]);
+
+            return response()->json([
+                $attendance
+            ]);
+        } catch (Exception $exception) {
+            return response()->json([$exception->getMessage()]);
+        }
+    }
+
+    /**
+     * Delete an existing attendance and return a JSON response.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function destroyExposed(int $id): JsonResponse
+    {
+        $attendance = Attendance::find($id);
+
+        if (!$attendance) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Attendance not found'
+            ], 404);
+        }
+
+        $attendance->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Attendance deleted successfully'
+        ]);
     }
 }

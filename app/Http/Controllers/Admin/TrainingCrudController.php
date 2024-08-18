@@ -12,6 +12,9 @@ use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
 use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * Class TrainingCrudController
@@ -122,4 +125,135 @@ class TrainingCrudController extends CrudController
     {
         $this->setupCreateOperation();
     }
+
+//exposed End-points:
+
+    public function indexExposed(): JsonResponse
+    {
+        // Retrieve all trainings from the database
+        $trainings = Training::all();
+
+        // Return a JSON response
+        return response()->json([
+            $trainings
+        ]);
+    }
+
+    /**
+     * Display a single training as JSON.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function showExposed(int $id): JsonResponse
+    {
+        $training = Training::find($id);
+
+        if ($training) {
+            return response()->json([
+                $training
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Training not found'
+            ], 404);
+        }
+    }
+
+    /**
+     * Create a new training and return the training data as JSON.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function storeExposed(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'difficultLevel' => 'required|in:i,in,a',
+                'duration' => 'required|string',
+                'type' => 'required|in:a,c,m,tf,tfx,tai,tc,tm',
+            ]);
+
+            $training = Training::create([
+                'name' => $request->name,
+                'description' => $request->description,
+                'difficult_level' => $request->difficultLevel,
+                'duration' => $request->duration,
+                'type' => $request->type
+            ]);
+
+            return response()->json([
+                $training
+            ], 201);
+        } catch (Exception $exception) {
+            return response()->json([$exception->getMessage()]);
+        }
+    }
+
+    /**
+     * Update an existing training and return the updated data as JSON.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function updateExposed(Request $request, int $id): JsonResponse
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'difficultLevel' => 'required|in:i,in,a',
+            'duration' => 'required|string',
+            'type' => 'required|in:a,c,m,tf,tfx,tai,tc,tm',
+        ]);
+
+        $training = Training::find($id);
+
+        if (!$training) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Training not found'
+            ], 404);
+        }
+
+        $training->update([
+            'name' => $request->name ?? $training->name,
+            'description' => $request->description ?? $training->description,
+            'difficult_level' => $request->difficultLevel ?? $training->difficult_level,
+            'duration' => $request->duration ?? $training->duration,
+            'type' => $request->type ?? $training->type,
+        ]);
+
+        return response()->json([
+            $training
+        ]);
+    }
+
+    /**
+     * Delete an existing training and return a JSON response.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function destroyExposed(int $id): JsonResponse
+    {
+        $training = Training::find($id);
+
+        if (!$training) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Training not found'
+            ], 404);
+        }
+
+        $training->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Training deleted successfully'
+        ]);
+    }
+
 }
