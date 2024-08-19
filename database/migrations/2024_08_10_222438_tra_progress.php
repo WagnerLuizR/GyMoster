@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->foreign('student_id')->references('id')->on('std_student')->onDelete('cascade');
             $table->foreign('training_id')->references('id')->on('tra_training')->onDelete('cascade');
             $table->text('progress_description');
+            $table->integer('progress_point');
             $table->date('date');
             $table->timestamps();
         });
@@ -27,6 +28,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('tra_progress');
     }
 };

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\TrainingCrudController;
 use Illuminate\Support\Facades\Route;
 
 // --------------------------
@@ -26,7 +25,6 @@ Route::group([
     Route::crud('training-progress', 'TrainingProgressCrudController');
 }); // this should be the absolute last line of this file
 
-Route::get('training/fetch/student', [TrainingCrudController::class, 'fetchStudent']);
 
 /**
  * DO NOT ADD ANYTHING HERE.

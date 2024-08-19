@@ -12,6 +12,9 @@ use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
 use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 /**
  * Class TrainingProgressCrudController
@@ -62,6 +65,7 @@ class TrainingProgressCrudController extends CrudController
             'attribute' => 'name',
             'model' => 'App\Models\Training',
         ]);
+        CRUD::column('stars')->label('Pontuação')->type('text');
         CRUD::column('progress_description')->type('textarea')->label('Progresso de treino');
         CRUD::column('date')->type('date')->label('Data');
     }
@@ -108,6 +112,16 @@ class TrainingProgressCrudController extends CrudController
                 return $query->orderBy('name', 'ASC')->get();
             }),
         ]);
+        CRUD::addField([
+            'name' => 'progress_point',
+            'label' => 'Pontuação',
+            'type' => 'select_from_array',
+            'options' => [1 => '1', 2 => '2', 3 => '3',
+                4 => '4', 5 => '5', 6 => '6', 7 => '7'],
+            'allows_null' => false,
+            'default' => 1
+        ]);
+
         CRUD::field('progress_description')->type('textarea')->label('Progresso de treino');
         CRUD::field('date')->type('date')->label('Data');
     }
@@ -121,5 +135,134 @@ class TrainingProgressCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+    }
+
+    //exposed End-points:
+    public function indexExposed(): JsonResponse
+    {
+        // Retrieve all trainingProgress from the database
+        $trainingProgresss = TrainingProgress::all();
+
+        // Return a JSON response
+        return response()->json([
+            $trainingProgresss
+        ]);
+    }
+
+    /**
+     * Display a single TrainingProgress as JSON.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function showExposed(int $id): JsonResponse
+    {
+        $trainingProgress = TrainingProgress::find($id);
+
+        if ($trainingProgress) {
+            return response()->json([
+                $trainingProgress
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'TrainingProgress not found'
+            ], 404);
+        }
+    }
+
+    /**
+     * Create a new TrainingProgress and return the TrainingProgress data as JSON.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function storeExposed(Request $request): JsonResponse
+    {
+        try {
+            $request->validate([
+                'studentId' => 'required',
+                'trainingId' => 'required',
+                'progressDescription' => 'required',
+                'progressPoint' => 'required',
+                'date' => 'required',
+            ]);
+
+            $trainingProgress = TrainingProgress::create([
+                'student_id' => $request->studentId,
+                'training_id' => $request->trainingId,
+                'progress_description' => $request->progressDescription,
+                'progress_point' => $request->progressPoint,
+                'date' => $request->date
+            ]);
+
+            return response()->json([
+                $trainingProgress
+            ], 201);
+        } catch (Exception $exception) {
+            return response()->json([$exception->getMessage()]);
+        }
+    }
+
+    /**
+     * Update an existing TrainingProgress and return the updated data as JSON.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function updateExposed(Request $request, int $id): JsonResponse
+    {
+        $request->validate([
+            'studentId' => 'required',
+            'trainingId' => 'required',
+            'progressDescription' => 'required',
+            'progressPoint' => 'required',
+            'date' => 'required|date',
+        ]);
+        $trainingProgress = TrainingProgress::find($id);
+
+        if (!$trainingProgress) {
+            return response()->json([
+                'success' => false,
+                'message' => 'TrainingProgress not found'
+            ], 404);
+        }
+
+        $trainingProgress->update([
+            'student_id' => $request->studentId ?? $trainingProgress->student_id,
+            'training_id' => $request->trainingId ?? $trainingProgress->training_id,
+            'progress_description' => $request->progressDescription ?? $trainingProgress->progress_description,
+            'date' => $request->date ?? $trainingProgress->date
+        ]);
+
+        return response()->json([
+            $trainingProgress
+        ]);
+    }
+
+    /**
+     * Delete an existing TrainingProgress and return a JSON response.
+     *
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function destroyExposed(int $id): JsonResponse
+    {
+        $trainingProgress = TrainingProgress::find($id);
+
+        if (!$trainingProgress) {
+            return response()->json([
+                'success' => false,
+                'message' => 'TrainingProgress not found'
+            ], 404);
+        }
+
+        $trainingProgress->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'TrainingProgress deleted successfully'
+        ]);
     }
 }
