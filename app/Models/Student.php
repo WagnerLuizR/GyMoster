@@ -2,48 +2,52 @@
 
 namespace App\Models;
 
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Student extends Model
 {
+    use CrudTrait;
     use HasFactory;
 
+    protected $table = 'std_student';
+    protected $primaryKey = 'id';
+    protected $guarded = ['id'];
     protected $fillable = [
-        'coa_id',
-        'tra_id',
         'nickname',
         'age',
+        'gender',
         'height',
         'weight',
-        'profile',
+        'bmi',
+        "created_at",
+        'updated_at',
     ];
 
-    // Método para criar um novo estudante
-    public static function createStudent($data)
+    protected $casts = [
+        'id' => 'integer',
+    ];
+
+    public function trainings(): BelongsToMany
     {
-        return self::create($data);
+        return $this->belongsToMany(Training::class);
     }
 
-    // Método para atualizar os dados de um estudante
-    public function updateStudent($data)
+    public function attendance(): HasOne
     {
-        $this->update($data);
+        return $this->hasOne(Attendance::class);
     }
 
-    // Método para excluir um estudante
-    public function deleteStudent()
+    public function schedule(): HasOne
     {
-        $this->delete();
+        return $this->hasOne(Schedule::class);
     }
 
-    // Método para buscar um estudante por ID
-    public static function findStudentById($id)
+    public function nutritionalPlan(): HasOne
     {
-        return self::find($id);
-    }
-    public function course()
-    {
-        return $this->belongsTo(Coach::class, 'coa_id');
+        return $this->hasOne(NutritionalPlan::class);
     }
 }

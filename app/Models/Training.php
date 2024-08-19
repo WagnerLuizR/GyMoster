@@ -2,39 +2,41 @@
 
 namespace App\Models;
 
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Training extends Model
 {
+    use CrudTrait;
     use HasFactory;
+
+    protected $table = 'tra_training';
+    protected $guarded = ['id'];
 
     protected $fillable = [
         'name',
         'description',
+        'difficult_level',
+        'duration',
+        'type'
     ];
 
-    // Método para criar um novo treino
-    public static function createTraining($data)
+    protected $casts = [
+        'id' => 'integer',
+    ];
+
+    public function students(): BelongsToMany
     {
-        return self::create($data);
+        return $this->belongsToMany(Student::class, 'student_training',
+            'training_id', 'student_id');
     }
 
-    // Método para atualizar os dados de um treino
-    public function updateTraining($data)
+    public function schedule(): HasOne
     {
-        $this->update($data);
+        return $this->hasOne(Schedule::class);
     }
 
-    // Método para excluir um treino
-    public function deleteTraining()
-    {
-        $this->delete();
-    }
-
-    // Método para buscar um treino por ID
-    public static function findTrainingById($id)
-    {
-        return self::find($id);
-    }
 }
