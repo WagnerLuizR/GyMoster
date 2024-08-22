@@ -54,7 +54,12 @@ class StudentRequest extends FormRequest
     public function messages()
     {
         return [
-            //
+            'nickname' => 'Campo :attribute obrigatório.',
+            'age' => 'Campo :attribute obrigatório.',
+            'gender' => 'Campo :attribute obrigatório.',
+            'height' => 'Campo :attribute obrigatório.',
+            'weight' => 'Campo :attribute obrigatório.',
+            'bmi' => 'Campo :attribute obrigatório.',
         ];
     }
 }

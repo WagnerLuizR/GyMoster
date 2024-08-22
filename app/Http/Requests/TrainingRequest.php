@@ -27,7 +27,7 @@ class TrainingRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'difficult_level' => 'required|in:i,in,a',
-            'duration' => 'required|date_format:H:i',
+            'duration' => 'required',
             'type' => 'required|in:a,c,m,tf,tfx,tai,tc,tm',
         ];
     }
@@ -52,7 +52,10 @@ class TrainingRequest extends FormRequest
     public function messages()
     {
         return [
-            //
+            'name' => 'Campo :attribute obrigatório.',
+            'difficult_level' => 'Campo :attribute obrigatório.',
+            'duration' => 'Campo :attribute obrigatório.',
+            'type' => 'Campo :attribute obrigatório.'
         ];
     }
 }

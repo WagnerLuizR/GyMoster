@@ -51,7 +51,9 @@ class AttendanceRequest extends FormRequest
     public function messages()
     {
         return [
-            //
+            'attendance_date' => 'Campo :attribute obrigatório.',
+            'status' => 'Campo :attribute obrigatório.',
+            'student_id' => 'Campo :attribute obrigatório.',
         ];
     }
 }

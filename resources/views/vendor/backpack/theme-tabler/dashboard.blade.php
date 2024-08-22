@@ -14,7 +14,8 @@
 
 @section('content')
     <div style="text-align: center;">
+        <h1>A plataforma Gym Monster te auxilia na administração de sua Academia.</h1>
         <img src="https://preview.tabler.io/static/illustrations/light/weightlifting.png" alt="weightlifting"
-             style="align-content: center; width: 70%; max-width: 70%;">
+             style="align-content: center; width: 65%; max-width: 65%;">
     </div>
 @endsection
